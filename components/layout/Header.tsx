@@ -1,5 +1,4 @@
-import { UserButton, UserProfile } from "@clerk/nextjs"
-import { Button } from "../ui/button"
+import { UserButton } from "@clerk/nextjs"
 import Logo from "./Logo"
 import DesktopNav from "./DesktopNav"
 import MobileNav from "./MobileNav"

@@ -1,7 +1,6 @@
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { testimonials } from "@/constants/indexl"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const Testimonials = () => {
 	return (
