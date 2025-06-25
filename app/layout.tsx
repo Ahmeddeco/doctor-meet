@@ -26,6 +26,7 @@ export default function RootLayout({
 		<ClerkProvider
 			appearance={{
 				baseTheme: dark,
+				cssLayerName: "clerk",
 			}}
 		>
 			<html lang="en" suppressHydrationWarning>
@@ -37,7 +38,7 @@ export default function RootLayout({
 						disableTransitionOnChange
 					>
 						<Header />
-						<main className="min-h-dvh pt-14 container mx-auto">{children}</main>
+						<main className="min-h-dvh pt-14 ">{children}</main>
 						<Footer />
 						<Toaster />
 					</ThemeProvider>

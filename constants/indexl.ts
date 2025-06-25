@@ -15,6 +15,13 @@ type featureType = {
   string,
 }[]
 
+type testimonialsType = {
+  initials: string,
+  name: string,
+  role: string,
+  quote: string
+}[]
+
 export const features: featureType = [
   {
     icon: User,
@@ -54,7 +61,7 @@ export const features: featureType = [
   },
 ]
 
-export const testimonials = [
+export const testimonials: testimonialsType = [
   {
     initials: "SP",
     name: "Sarah P.",
@@ -79,8 +86,8 @@ export const testimonials = [
 ]
 
 export const creditBenefits = [
-  "Each consultation requires <strong class='text-emerald-400'>2 credits</strong> regardless of duration",
-  "Credits <strong class='text-emerald-400'>never expire</strong> - use them whenever you need",
-  "Monthly subscriptions give you <strong class='text-emerald-400'>fresh credits every month</strong>",
-  "Cancel or change your subscription <strong class='text-emerald-400'>anytime</strong> without penalties",
+  "Each consultation requires 2 credits regardless of duration",
+  "Credits never expire - use them whenever you need",
+  "Monthly subscriptions give you fresh credits every month",
+  "Cancel or change your subscription anytime without penalties",
 ]

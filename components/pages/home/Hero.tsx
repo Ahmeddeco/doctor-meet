@@ -5,21 +5,19 @@ import Image from "next/image"
 
 const Hero = () => {
 	return (
-		<section className="h-dvh flex items-center justify-between">
+		<section className="h-dvh flex lg:flex-row flex-col items-center justify-between container mx-auto px-4">
 			{/* ---------------------------------- text ---------------------------------- */}
-			<div className="h-full w-full lg:w-1/2 flex flex-col justify-center gap-8">
-				<Badge className="bg-emerald-900/30 border-emerald-700/30 px-4 py-2">
-					Healthcare made simple
-				</Badge>
-				<h1>
+			<div className="h-full w-full lg:w-1/2 flex flex-col justify-center gap-8 ">
+				<Badge>Healthcare made simple</Badge>
+				<h1 className="lg:text-start text-center">
 					Connect with doctors <br />
 					<span className="gradient-title">anytime, anywhere</span>
 				</h1>
-				<p>
-					Book appointments, consult via video,
-					<br /> and manage your healthcare journey all in one secure platform.{" "}
+				<p className="max-w-lg text-balance text-center lg:text-start">
+					Book appointments, consult via video, and manage your healthcare
+					journey all in one secure platform.
 				</p>
-				<div className="flex items-center gap-4">
+				<div className="flex items-center lg:justify-start justify-center gap-4 ">
 					<Button>
 						get started <ArrowRight />
 					</Button>
@@ -28,9 +26,14 @@ const Hero = () => {
 			</div>
 
 			{/* ---------------------------------- Image --------------------------------- */}
-			<div className="h-full w-full lg:w-1/2  flex items-center justify-center">
+			<div className="h-full w-full lg:w-1/2  flex items-center ">
 				<div className="w-full h-[70%] relative">
-					<Image src={"/images/banner2.webp"} alt={"doctors"} fill />
+					<Image
+						src={"/images/banner2.webp"}
+						alt={"doctors"}
+						fill
+						className="object-contain"
+					/>
 				</div>
 			</div>
 		</section>
