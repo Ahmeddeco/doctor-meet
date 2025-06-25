@@ -4,11 +4,11 @@ import Hero from "@/components/pages/home/Hero"
 import HowItWorks from "@/components/pages/home/HowItWorks"
 import Testimonials from "@/components/pages/home/Testimonials"
 
-export default function HomePage() {
+export default  function HomePage() {
 	return (
 		<>
 			<Hero />
-      <HowItWorks />
+			<HowItWorks />
 			<Consultation />
 			<Testimonials />
 			<CTA />

@@ -1,12 +1,26 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+generator zod {
+  provider                         = "zod-prisma-types"
+  output                           = "./generated"
+  useMultipleFiles                 = true
+  writeNullishInModelTypes         = true
+  createModelTypes                 = true // default is true
+  writeBarrelFiles                 = false // default is true
+  createInputTypes                 = false // default is true
+  addInputTypeValidation           = false // default is true
+  addIncludeType                   = false // default is true
+  addSelectType                    = false // default is true
+  validateWhereUniqueInput         = false // default is true
+  createOptionalDefaultValuesTypes = false // default is false
+  createRelationValuesTypes        = false // default is false
+  createPartialTypes               = false // default is false
+  useDefaultValidators             = false // default is true
+  coerceDate                       = false // default is true
+}
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../lib/generated/prisma"
+  provider      = "prisma-client-js"
+  output        = "../lib/generated/prisma"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
@@ -14,7 +28,129 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model aha {
-  id   String @id @default(uuid())
-  name String
+model User {
+  id          String   @id @default(uuid())
+  clerkUserId String   @unique // Clerk's user ID
+  email       String   @unique
+  name        String?
+  imageUrl    String?
+  role        UserRole @default(UNASSIGNED) // UNASSIGNED, PATIENT, DOCTOR, ADMIN
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Patient-specific fields
+  credits Int @default(2) // Accumulated credit balance
+
+  // Doctor-specific fields
+  specialty          String?
+  experience         Int? // Years of experience
+  credentialUrl      String? // Document URL
+  description        String?             @db.Text
+  verificationStatus VerificationStatus? @default(PENDING)
+
+  // Relations
+  patientAppointments Appointment[]       @relation("PatientAppointments")
+  doctorAppointments  Appointment[]       @relation("DoctorAppointments")
+  availabilities      Availability[]
+  transactions        CreditTransaction[]
+  payouts             Payout[]
+}
+
+model Availability {
+  id        String     @id @default(uuid())
+  doctorId  String
+  doctor    User       @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  startTime DateTime
+  endTime   DateTime
+  status    SlotStatus @default(AVAILABLE)
+
+  @@index([doctorId, startTime])
+}
+
+model Appointment {
+  id                 String            @id @default(uuid())
+  patientId          String
+  patient            User              @relation("PatientAppointments", fields: [patientId], references: [id])
+  doctorId           String
+  doctor             User              @relation("DoctorAppointments", fields: [doctorId], references: [id])
+  startTime          DateTime // Start time of appointment
+  endTime            DateTime // End time of appointment
+  status             AppointmentStatus @default(SCHEDULED)
+  notes              String?           @db.Text
+  patientDescription String?           @db.Text
+
+  // Video session fields
+  videoSessionId    String? // Vonage Video API Session ID
+  videoSessionToken String? // Optional: Can store tokens if needed
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, startTime])
+  @@index([doctorId, startTime])
+}
+
+model CreditTransaction {
+  id        String          @id @default(uuid())
+  userId    String
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount    Int // Positive for additions, negative for usage
+  type      TransactionType
+  packageId String? // Reference to which package was purchased
+  createdAt DateTime        @default(now())
+}
+
+model Payout {
+  id          String       @id @default(uuid())
+  doctorId    String
+  doctor      User         @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  amount      Float // Total payout amount in USD
+  credits     Int // Number of credits being paid out
+  platformFee Float // Platform fee deducted (2 USD per credit)
+  netAmount   Float // Amount doctor receives (8 USD per credit)
+  paypalEmail String // Doctor's PayPal email for payout
+  status      PayoutStatus @default(PROCESSING)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  processedAt DateTime? // When admin marked it as processed
+  processedBy String? // Admin who processed it
+
+  @@index([status, createdAt])
+  @@index([doctorId, status])
+}
+
+enum PayoutStatus {
+  PROCESSING
+  PROCESSED
+}
+
+enum SlotStatus {
+  AVAILABLE
+  BOOKED
+  BLOCKED
+}
+
+enum UserRole {
+  UNASSIGNED
+  PATIENT
+  DOCTOR
+  ADMIN
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+enum TransactionType {
+  CREDIT_PURCHASE // Credits purchased through Clerk Billing
+  APPOINTMENT_DEDUCTION // Credit used for appointment
+  ADMIN_ADJUSTMENT // Manual adjustment by admin
 }

@@ -18,9 +18,11 @@ const Consultation = () => {
 				</h6>
 			</div>
 
-			<div className="flex flex-col lg:flex-row items-center w-full">
-				<PricingTable />
-			</div>
+			<Card className="w-full">
+				<CardContent className="flex flex-col lg:flex-row items-center w-full">
+					<PricingTable />
+				</CardContent>
+			</Card>
 
 			{/* ------------------------- How Credit System Works ------------------------ */}
 			<Card className="mt-12 bg-muted/20 border-emerald-900/30">
